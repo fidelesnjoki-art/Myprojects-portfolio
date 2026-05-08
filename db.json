@@ -1,0 +1,29 @@
+{
+  "projects": [
+    {
+      "id": "2",
+      "title": "Beauty-website",
+      "description": "A project about Nazarene beauty shop.",
+      "image": "https://i.pinimg.com/736x/59/bf/ba/59bfba093988d9ba7f0e0e1d4c3b4e09.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Insurance-website",
+      "description": "A project about Secure life insurance company.",
+      "image": "https://i.pinimg.com/1200x/62/a6/b7/62a6b7b0cc5407471f0574d96d96dd01.jpg"
+    },
+    {
+      "title": "mental-health website",
+      "description": "a project to educate about mental health and solutions ",
+      "image": "https://images.unsplash.com/photo-1493836512294-502baa1986e2?q=80&w=1490&auto=format&fit=crop&ixlib=rb-4.1.0",
+      "id": "EayqmLS-HcA"
+    },
+    {
+      "title": "Fire Island Adventure",
+      "description": "A fork to learn about html and vanilla css",
+      "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0f/df/fd/16/photo2jpg.jpg?w=1000&h=-1&s=1",
+      "id": "wuoBAvYyt8A"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
