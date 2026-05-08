@@ -1,88 +1,60 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import NavBar from './components/NavBar'
-import ProjectForm from './components/ProjectForm'
 import ProjectList from './components/ProjectList'
+import ProjectForm from './components/ProjectForm'
 
 function App() {
-  const [projects, setProjects] = useState([])
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [image, setImage] = useState('')
-  const [search, setSearch] = useState('')
+  const [projects, setProjects] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-  fetch('http://localhost:3000/projects')
-    .then(res => res.json())
-    .then(data => {
-      console.log('Fetched:', data) // ← Add this line
-      setProjects(data)
-    })
-    .catch(err => console.log('Fetch error:', err))
-}, [])
+  useEffect(() => {
+    fetch("http://localhost:3000/projects")
+      .then(res => res.json())
+      .then(data => setProjects(data))
+      .catch(err => console.log('Fetch error:', err));
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    const newProject = { title, description, image }
-    
-    fetch('http://localhost:3000/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  const addProject = (newProject) => {
+    fetch("http://localhost:3000/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newProject)
     })
       .then(res => res.json())
-      .then(data => {
-        setProjects([...projects, data])
-        setTitle('')
-        setDescription('')
-        setImage('')
-      })
-      .catch(err => console.log(err))
-  }
+      .then(data => setProjects([...projects, data]));
+  };
 
-  const handleDelete = (id) => {
+  const deleteProject = (id) => {
     fetch(`http://localhost:3000/projects/${id}`, {
-      method: 'DELETE'
+      method: "DELETE"
     })
-      .then(() => {
-        const updatedProjects = projects.filter(project => project.id !== id)
-        setProjects(updatedProjects)
-      })
-      .catch(err => console.log(err))
-  }
+      .then(() => setProjects(projects.filter(project => project.id !== id)));
+  };
 
-  const filteredProjects = projects.filter(project =>
-    project.title.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredProjects = projects.filter(project => {
+    return (
+      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
-    <div className="app">
-      <NavBar />
+    <>
+      <h1>My Portfolio</h1>
       
-      <ProjectForm 
-        title={title}
-        setTitle={setTitle}
-        description={description}
-        setDescription={setDescription}
-        image={image}
-        setImage={setImage}
-        handleSubmit={handleSubmit}
-      />
+      <div className="search-container">
+        <input 
+          type="text" 
+          placeholder="Search projects by title or description"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-bar"
+        />
+      </div>
 
-      <input 
-        type="text" 
-        placeholder="Search projects..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="search-bar"
-      />
-
-      <ProjectList 
-        projects={filteredProjects} 
-        handleDelete={handleDelete} 
-      />
-    </div>
+      <ProjectForm addProject={addProject} />
+      <ProjectList projects={filteredProjects} deleteProject={deleteProject} />
+    </>
   )
 }
 
