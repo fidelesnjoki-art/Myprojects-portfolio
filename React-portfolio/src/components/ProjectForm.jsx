@@ -9,7 +9,8 @@ function ProjectForm({ title, setTitle, description, setDescription, image, setI
         required
       />
       
-      <textarea
+      <input
+        type="text"
         placeholder="Project Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
