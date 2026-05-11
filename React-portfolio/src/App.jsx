@@ -7,29 +7,24 @@ function App() {
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+ 
   useEffect(() => {
-    fetch("http://localhost:3000/projects")
+    fetch('/db.json')
       .then(res => res.json())
-      .then(data => setProjects(data))
+      .then(data => setProjects(data.projects))
       .catch(err => console.log('Fetch error:', err));
   }, []);
 
   const addProject = (newProject) => {
-    fetch("http://localhost:3000/projects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newProject)
-    })
-      .then(res => res.json())
-      .then(data => setProjects([...projects, data]));
+  const projectWithId = { ...newProject, id: Date.now() };
+  setProjects([...projects, projectWithId]);
   };
 
   const deleteProject = (id) => {
-    fetch(`http://localhost:3000/projects/${id}`, {
-      method: "DELETE"
-    })
-      .then(() => setProjects(projects.filter(project => project.id !== id)));
-  };
+  setProjects(projects.filter(project => project.id !== id));
+    
+   }
+
 
   const filteredProjects = projects.filter(project => {
     return (
