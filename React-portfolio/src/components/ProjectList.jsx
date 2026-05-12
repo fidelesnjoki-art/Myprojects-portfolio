@@ -77,16 +77,19 @@ function ProjectList() {
   if (projects.length === 0) return <p>No projects yet. Add one!</p>;
 
   return (
-    <div className="project-list">
-      {projects.map(project => (
-        <div key={project.id} className="project-item">
-          <h3>{project.title}</h3>
-          <p>{project.description}</p>
-          <button onClick={() => handleDelete(project.id)}>Delete</button>
-        </div>
-      ))}
+    <div className="container">
+      <div className="project-list">
+        {projects.map(project => (
+          <div key={project.id} className="project-item">
+            <h3>{project.title}</h3>
+            <p>{project.description}</p>
+            <button onClick={() => handleDelete(project.id)}>Delete</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export default ProjectList;
+

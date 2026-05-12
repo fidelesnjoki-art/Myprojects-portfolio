@@ -1,8 +1,15 @@
+import { doc, deleteDoc } from 'firebase/firestore'
+import { db } from '../firebase'
+
 function ProjectItem({ project, onDelete }) {
-  const handleDelete = () => {
-    fetch(`http://localhost:3000/projects/${project.id}`, {
-      method: "DELETE"
-    }).then(() => onDelete(project.id));
+  
+  const handleDelete = async () => {
+    try {
+      await deleteDoc(doc(db, 'projects', project.id))
+      onDelete(project.id)
+    } catch (error) {
+      console.error("Error deleting project: ", error)
+    }
   };
 
   return (
@@ -11,7 +18,9 @@ function ProjectItem({ project, onDelete }) {
         <h3>{project.title}</h3>
         <p>{project.description}</p>
       </div>
-      <button className="delete-btn" onClick={handleDelete}>×</button>
+      <button className="delete-btn" onClick={handleDelete}>
+        Delete
+      </button>
     </div>
   );
 }

@@ -1,122 +1,97 @@
-// // src/App.jsx
-
-// import { useState, useEffect } from "react"
-// import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore"
-// import { db } from "./firebase"
-// import ProjectList from "./components/ProjectList"
-
-// function App() {
-//   const [projects, setProjects] = useState([])
-//   const [newTitle, setNewTitle] = useState("")
-//   const [newDesc, setNewDesc] = useState("")
-//   const [loading, setLoading] = useState(true)
-
-//   const projectsRef = collection(db, "projects")
-
-//   // Load projects from Firestore when app starts
-//   useEffect(() => {
-//     const getProjects = async () => {
-//       const data = await getDocs(projectsRef)
-//       setProjects(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-//       setLoading(false)
-//     }
-//     getProjects()
-//   }, [])
-
-//   // Add project to Firestore
-//   const addProject = async (e) => {
-//     e.preventDefault()
-//     if (!newTitle.trim()) return
-
-//     const newProject = {
-//       title: newTitle,
-//       description: newDesc,
-//       image: ""
-//     }
-
-//     const docRef = await addDoc(projectsRef, newProject)
-//     setProjects([...projects, { ...newProject, id: docRef.id }])
-//     setNewTitle("")
-//     setNewDesc("")
-//   }
-
-//   // Delete project from Firestore
-//   const deleteProject = async (id) => {
-//     await deleteDoc(doc(db, "projects", id))
-//     setProjects(projects.filter(p => p.id !== id))
-//   }
-
-//   return (
-//     <div className="app">
-//       <h1>Projects</h1>
-
-//       <form onSubmit={addProject}>
-//         <input 
-//           type="text" 
-//           placeholder="Project title"
-//           value={newTitle}
-//           onChange={(e) => setNewTitle(e.target.value)}
-//         />
-//         <input 
-//           type="text" 
-//           placeholder="Description"
-//           value={newDesc}
-//           onChange={(e) => setNewDesc(e.target.value)}
-//         />
-//         <button type="submit">Add Project</button>
-//       </form>
-
-//       {loading ? (
-//         <p>Loading...</p>
-//       ) : (
-//         <ProjectList projects={projects} deleteProject={deleteProject} />
-//       )}
-//     </div>
-//   )
-// }
-
-// export default App
-
-
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
-import ProjectList from './components/ProjectList'
-import ProjectForm from './components/ProjectForm'
 
 function App() {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState([
+    { id: 1, title: 'react-recap', description: 'a recap about react' },
+  
+  ])
+  
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [search, setSearch] = useState('')
 
-  // GET all projects
-  useEffect(() => {
-    fetch("http://localhost:3000/projects")
-      .then(res => res.json())
-      .then(data => setProjects(data))
-      .catch(err => console.log('Fetch error:', err));
-  }, []);
 
-  const addProject = (newProject) => {
-    fetch("http://localhost:3000/projects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newProject)
-    })
-      .then(res => res.json())
-      .then(data => setProjects([...projects, data]));
-  };
 
-  const deleteProject = (id) => {
-    fetch(`http://localhost:3000/projects/${id}`, {
-      method: "DELETE"
-    })
-      .then(() => setProjects(projects.filter(project => project.id !== id)));
-  };
+  const filteredProjects = projects.filter(p => 
+    p.title.toLowerCase().includes(search.toLowerCase()) ||
+    p.description.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!title || !description) return
+    
+    const newProject = {
+      id: Date.now(),
+      title,
+      description
+    }
+    setProjects([newProject, ...projects])
+    setTitle('')
+    setDescription('')
+  }
+
+  const handleDelete = (id) => {
+    setProjects(projects.filter(p => p.id !== id))
+  }
+
+  // const filteredProjects = projects.filter(p => 
+  //   p.title.toLowerCase().includes(search.toLowerCase()) ||
+  //   p.description.toLowerCase().includes(search.toLowerCase())
+  // )
 
   return (
-    <>
+    <div className="app-container">
       <h1>My Portfolio</h1>
-      <ProjectForm addProject={addProject} />
-      <ProjectList projects={projects} deleteProject={deleteProject} />
-    </>
+      
+      <div className="project-form">
+        <h2>Add New Project</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Project Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <button type="submit">Add Project</button>
+        </form>
+      </div>
+
+      <div className="project-form">
+        <input
+          type="text"
+          placeholder="Search projects..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ width: '100%' }}
+        />
+      </div>
+
+      <div className="projects-grid">
+        {filteredProjects.length > 0 ? (
+          filteredProjects.map(project => (
+            <div key={project.id} className="project-item">
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <button onClick={() => handleDelete(project.id)}>Delete</button>
+            </div>
+          ))
+        ) : (
+          <p style={{ color: '#666', textAlign: 'center', gridColumn: '1 / -1' }}>
+            No projects found
+          </p>
+        )}
+      </div>
+    </div>
   )
 }
 
