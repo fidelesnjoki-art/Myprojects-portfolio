@@ -1,11 +1,19 @@
-function ProjectItem({ project, handleDelete }) {
+function ProjectItem({ project, onDelete }) {
+  const handleDelete = () => {
+    fetch(`http://localhost:3000/projects/${project.id}`, {
+      method: "DELETE"
+    }).then(() => onDelete(project.id));
+  };
+
   return (
-    <div className="project-card">
-      <img src={project.image} alt={project.title} />
-      <h3>{project.title}</h3>
-      <p>{project.description}</p>
-      <button onClick={() => handleDelete(project.id)}>Delete</button>
+    <div className="project-item">
+      <div className="project-content">
+        <h3>{project.title}</h3>
+        <p>{project.description}</p>
+      </div>
+      <button className="delete-btn" onClick={handleDelete}>×</button>
     </div>
-  )
+  );
 }
-export default ProjectItem
+
+export default ProjectItem;
