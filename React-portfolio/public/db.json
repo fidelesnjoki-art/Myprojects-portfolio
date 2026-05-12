@@ -1,20 +1,24 @@
 {
   "projects": [
     {
-      "id": "2",
-      "title": "Beauty-website",
+      "id": "1",
+      "title": "Beauty website",
       "description": "A project about Nazarene beauty shop."
     },
     {
-      "id": "3",
-      "title": "Insurance-website", 
-      "description": "A project about Secure Life insurance company."
+      "id": "2", 
+      "title": "Insurance website",
+      "description": "A project about Secure Life Insurance company."
     },
     {
-      "id": "EayqmLS-HCA",
-      "title": "mental-health website",
-      "description": "a project to educate about mental health and solutions"
+      "id": "3",
+      "title": "Mental Health Website",
+      "description": "A project to educate about mental health and solutions."
+    },
+    {
+      "id": "4",
+      "title": "Fire Island Adventure", 
+      "description": "A fork to learn about HTML and vanilla CSS."
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

@@ -1,50 +1,49 @@
-import { useState } from 'react'
+// 
 
-function ProjectForm({ addProject }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');
+import { useState } from "react";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-  const handleSubmit = (e) => {
+function ProjectForm({ onAdd }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newProject = {
-      title: title,
-      description: description,
-      image: image
-    };
-    addProject(newProject);
-    setTitle('');
-    setDescription('');
-    setImage('');
+    if (!title || !description) return;
+
+    try {
+      const docRef = await addDoc(collection(db, "projects"), { 
+        title, 
+        description 
+      });
+      onAdd({ id: docRef.id, title, description });
+      setTitle("");
+      setDescription("");
+    } catch (error) {
+      console.error("Error adding project:", error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="project-form">
-      <h2>Add New Project</h2>
+    <form onSubmit={handleSubmit}>
       <input 
-        type="text" 
-        placeholder="Project Title"
+        type="text"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
+        onChange={e => setTitle(e.target.value)}
+        placeholder="Project title"
+        required 
       />
       <input 
-        type="text" 
-        placeholder="Description"
+        type="text"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
+        onChange={e => setDescription(e.target.value)}
+        placeholder="Project description"
+        required 
       />
-      {/* <input 
-        type="text" 
-        placeholder="Image URL"
-        value={image}
-        onChange={(e) => setImage(e.target.value)}
-        required
-      /> */}
       <button type="submit">Add Project</button>
     </form>
-  )
+  );
 }
 
-export default ProjectForm
+export default ProjectForm;
